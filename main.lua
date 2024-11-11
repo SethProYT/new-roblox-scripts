@@ -13,22 +13,19 @@ local FunSection = Fun:NewSection("Fun")
 local HBSection = HBE:NewSection("Hitbox")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local Character = LocalPlayer.Character
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local hb = true
 local thefov = 120
 local fovv = false
 local stopFOV = false
-local plrname = Character.Name
 local size
 local hit_head
 local hit_torso
-local change_fov
 
 
 local function HitboxExpander() 
+    local LocalPlayer = game.Players.LocalPlayer
     if hb == true then 
         for _, v in pairs(Players:GetPlayers()) do
             if v ~= LocalPlayer and v.Character then
@@ -71,6 +68,8 @@ end
 
 local function grabsoda()
     local soda_location = workspace.Map.Buildings.Shop.VendingMachine.att.ProximityPrompt
+    local Character = game.Players.LocalPlayer.Character
+    local LocalPlayer = game.Players.LocalPlayer
     local lastplrlocation = Character.HumanoidRootPart.CFrame.Position
     local lastcampos = game:GetService("Workspace").CurrentCamera.CFrame.Position
 
@@ -89,6 +88,7 @@ end
 
 local function teleportPlayer(coordinates)
     local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+    local Character = game.Players.LocalPlayer.Character
     local tween = TweenService:Create(
         Character.HumanoidRootPart, 
         tweenInfo, 
@@ -99,6 +99,7 @@ local function teleportPlayer(coordinates)
 end
 
 local function makePlayerRainbow()
+    local LocalPlayer = game.Players.LocalPlayer
     local character = LocalPlayer.Character
     if not character then return end
 
@@ -142,6 +143,7 @@ end
 
 local function fov() 
     local Cam = game.Workspace.CurrentCamera
+    local Character = game.Players.LocalPlayer.Character
     stopFOV = false
     
     fovConnection = game:GetService("RunService").RenderStepped:Connect(function()
@@ -151,11 +153,8 @@ local function fov()
             return
         end
 
-        if Character and Character:FindFirstChild("Humanoid") then
-            if Character.Humanoid.Health <= 0 then
-                stopFOVChange()
-                return
-            end
+        if Character.Humanoid.Health <= 0 then
+            stopFOV = true
         end
 
         if fovv then
@@ -177,7 +176,7 @@ HBSection:NewButton("HB expander", "increase hitbox size", function()
     HitboxExpander()
 end)
 
-HBSection:NewSlider("HB Size", "Changes the hitbox size", 10, 0, function(s)
+HBSection:NewSlider("HB Size", "Changes the hitbox size", 10, 0, function(s) -- 500 (MaxValue) | 0 (MinValue)
     size = Vector3.new(s, s, s)
 end)
 
@@ -206,15 +205,16 @@ BlatantSection:NewDropdown("Teleports", "Teleport with PVP on", {"Shop", "Tower"
 end)
 
 BlatantSection:NewToggle("Spinbot", "spin your character", function(state)
+    local Character = game.Players.LocalPlayer.Character
     if state then
-        Character.HumanoidRootPart:FindFirstChild("aoshfajkhfsjkdhfjkshdkjf hiuerywe8rubwiuerbyweuibryweiubry(#*$B^(*$&B@(*#B&$*(@#&$(*@#&$(*@#$)")
+        Character.HumanoidRootPart:FindFirstChild("redbull")
         local Spin = Instance.new("BodyAngularVelocity")
-        Spin.Name = "aoshfajkhfsjkdhfjkshdkjf hiuerywe8rubwiuerbyweuibryweiubry(#*$B^(*$&B@(*#B&$*(@#&$(*@#&$(*@#&$(*@#$"
+        Spin.Name = "redbull"
         Spin.Parent = Character.HumanoidRootPart
         Spin.MaxTorque = Vector3.new(0, math.huge, 0)
         Spin.AngularVelocity = Vector3.new(0,50,0)
     else
-        Character.HumanoidRootPart:FindFirstChild("aoshfajkhfsjkdhfjkshdkjf hiuerywe8rubwiuerbyweuibryweiubry(#*$B^(*$&B@(*#B&$*(@#&$(*@#&$(*@#$"):Destroy()
+        Character.HumanoidRootPart:FindFirstChild("redbull"):Destroy()
     end
 end)
 
@@ -243,6 +243,7 @@ ClientSideSection:NewToggle("120 FOV", "Increase FOV", function(state)
 end)
 
 ClientSideSection:NewToggle("Rainbow Player", "Makes your character cycle through rainbow colors", function(state)
+    local LocalPlayer = game.Players.LocalPlayer
     if state then
         makePlayerRainbow()
     else
@@ -272,10 +273,8 @@ while wait(60) do
 end
 
 
-Character.Humanoid.Died:Connect(function()
-    Character.HumanoidRootPart["aoshfajkhfsjkdhfjkshdkjf hiuerywe8rubwiuerbyweuibryweiubry(#*$B^(*$&B@(*#B&$*(@#&$(*@#&$(*@#$)"]:Destroy()
-    repeat wait() until game:GetService("Players")[plrname].Character:FindFirstChild("HumanoidRootPart")
-
-    Library:Destroy()
-    Window:Destroy()
+game.Players.LocalPlayer.Character.HumanoidRootPart.Humanoid.Died:Connect(function() 
+    print("plr died")
+    game.Players.LocalPlayer.Character.HumanoidRootPart.Humanoid["redbull"]:Destroy()
+    stopFOVChange()
 end)
